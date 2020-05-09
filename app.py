@@ -9,7 +9,7 @@ from query_helper import dict_to_query
 
 MYSQL_USER = os.environ["DB_USER"]
 MYSQL_PW = os.environ["DB_PW"]
-MYSQL_DB_NAME = os.environ["DB_NAME"]
+MYSQL_DB_NAME = "expectations"
 MYSQL_HOST = os.environ.get("DB_HOST", "127.0.0.1")
 MYSQL_PORT = os.environ.get("DB_PORT", "3306")
 

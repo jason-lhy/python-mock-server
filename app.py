@@ -20,32 +20,28 @@ connection = engine.connect()
 app = Flask(__name__)
 
 
-@app.route('/expectation', methods=["POST", "GET"])
-def set_expectation():
-    if request.method == "GET":
-        return "Get Request"
-    elif request.method == "POST":
-        item_id = str(uuid.uuid4())
-        expectation = Expectation(
-            path=request.json['path'],
-            method=request.json['method'],
-            arguments={
-                k: str(v) for k, v in request.json['arguments'].items()},
-            response=request.json['response']
-        )
-        query = f"""
-        INSERT INTO 
-            expectations (id, path, method, arguments, response)
-        VALUES (
-            '{item_id}', '{expectation.path}', '{expectation.method}', '{json.dumps(expectation.arguments)}', '{json.dumps(expectation.response)}');"""
-        db.text(query)
-        connection.execute(query)
-        return jsonify(expectation.__dict__)
-    return 'hello world'
+@app.route('/expectation', methods=["POST"])
+def handle_expectation():
+    item_id = str(uuid.uuid4())
+    expectation = Expectation(
+        path=request.json['path'],
+        method=request.json['method'],
+        arguments={
+            k: str(v) for k, v in request.json['arguments'].items()},
+        response=request.json['response']
+    )
+    query = f"""
+    INSERT INTO 
+        expectations (id, path, method, arguments, response)
+    VALUES (
+        '{item_id}', '{expectation.path}', '{expectation.method}', '{json.dumps(expectation.arguments)}', '{json.dumps(expectation.response)}');"""
+    db.text(query)
+    connection.execute(query)
+    return jsonify(expectation.__dict__)
 
 
 @app.route('/<path:u_path>', methods=["POST", "GET", "PUT", "PATCH", "DELETE"])
-def hello_world(u_path):
+def get_expectation_for_path(u_path):
     if request.method == 'GET':
         args = request.args.to_dict()
     else:
